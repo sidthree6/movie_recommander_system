@@ -65,11 +65,13 @@ app.layout = html.Div([
               [dash.dependencies.Input('dropdown', 'value')])
 def display_value(value):
     recommand = getRecommendation(value, num=10)
-    
-    output = 'Recommended movie based on : {}\n\n'.format(value)
+    output = []
+    output.append(html.P())
+    output.append(html.P())
+    output.append(html.P('Recommended movie based on : {}\n\n'.format(value)))
     num = 1
-    for i in recommend['title']:
-        output = output + '{}) {}\n'.format(num, i)
+    for i in recommand['title']:
+        output.append(html.P('{}) {}'.format(num, i)))
         num=num+1
     
     return output
