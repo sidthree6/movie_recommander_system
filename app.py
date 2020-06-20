@@ -10,8 +10,8 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-df = pd.read_csv('ratings.csv')
-mv_t = pd.read_csv('movies.csv')
+df = pd.read_csv('https://raw.githubusercontent.com/Group-7-Big-Data/Assignment-1/master/ratings.csv')
+mv_t = pd.read_csv('https://raw.githubusercontent.com/Group-7-Big-Data/Assignment-1/master/movies.csv')
 df = pd.merge(df,mv_t,on='movieId')
 
 mv_matrix = df.pivot_table(index='userId',columns='title',values='rating')
