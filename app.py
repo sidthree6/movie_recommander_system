@@ -72,7 +72,7 @@ def display_value(value):
         output = output + '{}) {}\n'.format(num, i)
         num=num+1
     
-    return 'You have selected "{}"'.format(recommand)
+    return output
 
 if __name__ == '__main__':
     app.run_server(debug=True)
