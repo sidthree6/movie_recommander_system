@@ -45,16 +45,16 @@ def getRecommendation(name, num= 10, matrix=mv_matrix):
     corr_movie = corr_movie.drop('Ratings Count', 1)
     
     return corr_movie
-    
-recommand = getRecommendation('Toy Story (1995)', num=10)
 
 server = app.server
+
+movieOptions = df.title.unique()
 
 app.layout = html.Div([
     html.H2('Hello World'),
     dcc.Dropdown(
         id='dropdown',
-        options=[{'label': i, 'value': i} for i in ['LA', 'NYC', 'MTL']],
+        options=[{'label': i, 'value': i} for i in movieOptions],
         value='LA'
     ),
     html.Div(id='display-value')
@@ -63,6 +63,7 @@ app.layout = html.Div([
 @app.callback(dash.dependencies.Output('display-value', 'children'),
               [dash.dependencies.Input('dropdown', 'value')])
 def display_value(value):
+    recommand = getRecommendation(value, num=10)
     return 'You have selected "{}"'.format(recommand)
 
 if __name__ == '__main__':
