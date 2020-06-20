@@ -14,6 +14,9 @@ df = pd.read_csv('https://raw.githubusercontent.com/Group-7-Big-Data/Assignment-
 mv_t = pd.read_csv('https://raw.githubusercontent.com/Group-7-Big-Data/Assignment-1/master/movies.csv')
 df = pd.merge(df,mv_t,on='movieId')
 
+ratings = pd.DataFrame(df.groupby('title')['rating'].mean())
+ratings['Ratings Count'] = pd.DataFrame(df.groupby('title')['rating'].count())
+
 mv_matrix = df.pivot_table(index='userId',columns='title',values='rating')
 
 def getRecommendation(name, num= 10, matrix=mv_matrix):
