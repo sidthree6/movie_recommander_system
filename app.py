@@ -36,13 +36,14 @@ def getRecommendation(name, num= 10, matrix=mv_matrix):
     corr_movie = corr_movie.join(ratings['Ratings Count'])
     
     #Filtering out movies that have less than 100 reviews, as it will make a lot more sense
-    corr_movie = corr_movie[corr_movie['Ratings Count']>100].sort_values('Correlation',ascending=False).head(num)
+    corr_movie = corr_movie[corr_movie['Ratings Count']>100].sort_values('Correlation',ascending=False).head(num+1)
     
     # Removing first row, because its the movie itself
     corr_movie = corr_movie.iloc[1:]
     
     # Dropping Ratings count column (we dont need it)
     corr_movie = corr_movie.drop('Ratings Count', 1)
+    corr_movie = corr_movie.reset_index()
     
     return corr_movie
 
@@ -51,7 +52,7 @@ server = app.server
 movieOptions = df.title.unique()
 
 app.layout = html.Div([
-    html.H2('Hello World'),
+    html.H2('Recommending Movies (Select Movies from dropdown)'),
     dcc.Dropdown(
         id='dropdown',
         options=[{'label': i, 'value': i} for i in movieOptions],
@@ -64,6 +65,13 @@ app.layout = html.Div([
               [dash.dependencies.Input('dropdown', 'value')])
 def display_value(value):
     recommand = getRecommendation(value, num=10)
+    
+    output = 'Recommended movie based on : {}\n\n'.format(value)
+    num = 1
+    for i in recommend['title']:
+        output = output + '{}) {}\n'.format(num, i)
+        num=num+1
+    
     return 'You have selected "{}"'.format(recommand)
 
 if __name__ == '__main__':
