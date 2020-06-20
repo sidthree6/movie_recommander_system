@@ -36,7 +36,7 @@ def getRecommendation(name, num= 10, matrix=mv_matrix):
     corr_movie = corr_movie.join(ratings['Ratings Count'])
     
     #Filtering out movies that have less than 100 reviews, as it will make a lot more sense
-    corr_movie = corr_movie[corr_movie['Ratings Count']>100].sort_values('Correlation',ascending=False).head(num+1)
+    corr_movie = corr_movie[corr_movie['Ratings Count']>50].sort_values('Correlation',ascending=False).head(num+1)
     
     # Removing first row, because its the movie itself
     corr_movie = corr_movie.iloc[1:]
