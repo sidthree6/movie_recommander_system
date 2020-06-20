@@ -3,10 +3,47 @@ import os
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import numpy as np
+import pandas as pd
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+
+df = pd.read_csv('ratings.csv')
+mv_t = pd.read_csv('movies.csv')
+df = pd.merge(df,mv_t,on='movieId')
+
+mv_matrix = df.pivot_table(index='userId',columns='title',values='rating')
+
+def getRecommendation(name, num= 10, matrix=mv_matrix):
+    movie = matrix[name]
+    
+    #Using corrwith() to get correlations of the following pandas series
+    movie_one = matrix.corrwith(movie)
+    
+    #Clening the data further to remove NaN values
+    corr_movie = pd.DataFrame(movie_one, columns=['Correlation'])
+    corr_movie.dropna(inplace=True)
+    
+    #Now we can sort the dataframe by correlation so we can get the similar movies
+    #corr_movie.sort_values('Correlation', ascending = False)
+    
+    # Joining Ratings Count to corr_Forrest_Gump dataframe
+    corr_movie = corr_movie.join(ratings['Ratings Count'])
+    
+    #Filtering out movies that have less than 100 reviews, as it will make a lot more sense
+    corr_movie = corr_movie[corr_movie['Ratings Count']>100].sort_values('Correlation',ascending=False).head(num)
+    
+    # Removing first row, because its the movie itself
+    corr_movie = corr_movie.iloc[1:]
+    
+    # Dropping Ratings count column (we dont need it)
+    corr_movie = corr_movie.drop('Ratings Count', 1)
+    
+    return corr_movie
+    
+recommand = getRecommendation('Toy Story (1995)', num=10)
 
 server = app.server
 
@@ -23,7 +60,7 @@ app.layout = html.Div([
 @app.callback(dash.dependencies.Output('display-value', 'children'),
               [dash.dependencies.Input('dropdown', 'value')])
 def display_value(value):
-    return 'You have selected "{}"'.format(value)
+    return 'You have selected "{}"'.format(recommand)
 
 if __name__ == '__main__':
     app.run_server(debug=True)
